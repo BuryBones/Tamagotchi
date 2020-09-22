@@ -179,7 +179,9 @@ public class Pet implements Serializable {
     }
     private void die() {
         isAlive = false;
-        game.gameOver();
+        if (game != null) {
+            game.gameOver();
+        }
     }
 
     public String toString() {

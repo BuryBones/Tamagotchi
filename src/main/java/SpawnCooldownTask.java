@@ -19,7 +19,7 @@ public class SpawnCooldownTask extends TimerTask {
     @Override
     public void run() {
         // TODO: smth wrong with it??
-        game.setSpawnAllowed(true);
+//        game.setSpawnAllowed(true);
         game.spawn();
     }
 }

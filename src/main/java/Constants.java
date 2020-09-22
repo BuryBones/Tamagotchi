@@ -21,10 +21,10 @@ public abstract class Constants {
     public static final long GROWTH_RATE = 30000L;
 
     // pet's initial health level
-    public static final int BASE_HEALTH = 51;
+    public static final int BASE_HEALTH = 50;
 
     // pet's initial fun level
-    public static final int BASE_FUN = 51;
+    public static final int BASE_FUN = 50;
 
     // pet's maximum health level
     public static final int MAX_HEALTH = 100;

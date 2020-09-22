@@ -12,7 +12,7 @@ public class Loader {
 
     public boolean isSavePresent() {
         // TODO: do something
-        File saveFile = new File("saveFile.tam");
+        File saveFile = new File("tam.save");
         if (!saveFile.exists()) {
             System.out.println("FILE NOT FOUND");
             return false;
@@ -29,7 +29,7 @@ public class Loader {
     public SaveObj load() {
         // TODO: make method to throw SOME exceptions
         SaveObj result = null;
-        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream("saveFile.tam"))) {
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream("tam.save"))) {
             result = (SaveObj) ois.readObject();
             System.out.println("Loading complete!");
         } catch (IOException e) {

@@ -9,7 +9,6 @@ public class SaveObj implements Serializable {
     // TODO: rename variables!
     private Pet pet;
     private long exitTime;
-    private boolean isSpawnCooldownActive;
     private long witherDelay;
     private long spawnCooldownDelay;
     private boolean canGrow;
@@ -20,9 +19,6 @@ public class SaveObj implements Serializable {
     }
     public long getExitTime() {
         return exitTime;
-    }
-    public boolean isSpawnCooldownActive() {
-        return isSpawnCooldownActive;
     }
     public long getWitherDelay() {
         return witherDelay;
@@ -37,11 +33,10 @@ public class SaveObj implements Serializable {
         return growthTimePassed;
     }
 
-    public SaveObj(Pet pet, long exitTime, boolean isSpawnCooldownActive,
-                   long witherDelay, long spawnCooldownDelay, boolean canGrow, long growthTimePassed) {
+    public SaveObj(Pet pet, long exitTime, long witherDelay,
+                   long spawnCooldownDelay, boolean canGrow, long growthTimePassed) {
         this.pet = pet;
         this.exitTime = exitTime;
-        this.isSpawnCooldownActive = isSpawnCooldownActive;
         this.spawnCooldownDelay = spawnCooldownDelay;
         this.witherDelay = witherDelay;
         this.canGrow = canGrow;
