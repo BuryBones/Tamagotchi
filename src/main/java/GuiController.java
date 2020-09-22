@@ -27,6 +27,9 @@ public class GuiController {
     public void setPetName(String name) {
         mainFrame.setPetName(name);
     }
+    public void displayMessage(String message, long millis) {
+        mainFrame.displayMessage(message,millis);
+    }
     public PetType askForPetType() {
         return mainFrame.askForPetType();
     }

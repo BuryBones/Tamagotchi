@@ -4,7 +4,6 @@ import java.util.Timer;
 
 public class Game {
 
-//    private boolean isSpawnAllowed = true;
     private Pet currentPet = null;
     private Timer witherTimer;
     private WitherTask witherTask;
@@ -23,12 +22,6 @@ public class Game {
         this.guiController = guiController;
     }
 
-//    public boolean isSpawnAllowed() {
-//        return isSpawnAllowed;
-//    }
-//    public void setSpawnAllowed(boolean birthAllowed) {
-//        isSpawnAllowed = birthAllowed;
-//    }
     public Pet getPet() {
         return currentPet;
     }
@@ -36,18 +29,16 @@ public class Game {
     public void launch() {
         Loader loader = new Loader();
         if (loader.isSavePresent()) {
+            // save file found
             setUpLoadedGame(loader);
         } else {
             // no save file
-            // TODO: delete sout
-            System.out.println("NEED NEW PET");
             spawn();
         }
     }
     private void setUpLoadedGame(Loader loader) {
         SaveObj loadedSave = loader.load();
         Pet loadedPet = loadedSave.getPet();
-//        loadedPet.setGame(this);
 
         // get time passed from save till new game launch
         long dTime = System.currentTimeMillis() - loadedSave.getExitTime();
@@ -110,90 +101,6 @@ public class Game {
         }
     }
 
-//    private void setUpLoadedGame(Loader loader) {
-//        SaveObj loadedSave = loader.load();
-//
-//        currentPet = loadedSave.getPet();
-//        currentPet.setGame(this);
-//
-//        // get time passed from save till new game launch
-//        long dTime = System.currentTimeMillis() - loadedSave.getExitTime();
-//        System.out.println("DELTA TIME = " + dTime);
-//
-//        if (!currentPet.isMaxAge()) {
-//            long growthTimePassed = loadedSave.getGrowthTimePassed();
-////            if ((growthTimePassed + dTime) >= growthTaskDelay) {
-////                currentPet.enableGrowing();
-////            } else {
-////                growthTaskDelay -= (growthTimePassed+dTime);
-////            }
-//            growthTaskDelay -= (growthTimePassed+dTime);
-//            if (growthTaskDelay <= 0) {
-//                currentPet.enableGrowing();
-//                growthTaskDelay = Constants.GROWTH_RATE;
-//            }
-//        }
-//        setSpawnAllowed(loadedSave.isSpawnCooldownActive());
-//        if (isSpawnAllowed()) {
-//            // pet is either alive or dead and ready to spawn
-//            if (currentPet.isAlive()) {
-//                // pet is alive
-//
-//                // how many loops had passed while game was closed
-//                int loopsPassed = (int) (dTime/Constants.STATS_DECREASE_RATE_IN_MILLIS);
-//                System.out.println("LOOPS PASSED = " + loopsPassed);
-//                // time left till the end of a loop in saveFile
-//                long baseDelay = loadedSave.getWitherDelay();
-//                System.out.println("BASE DELAY = " + baseDelay);
-//                // unfinished loop while the game was closed
-//                long additionalDelay = dTime%Constants.STATS_DECREASE_RATE_IN_MILLIS;
-//                System.out.println("ADDITIONAL DELAY = " + additionalDelay);
-//                // result time to subtract from standard delay time
-//                long resultDelay = baseDelay - additionalDelay;
-//                System.out.println("RESULT DELAY = " + resultDelay);
-//                if (resultDelay <= 0) {
-//                    loopsPassed++;
-//                    System.out.println("LOOPS++");
-//                }
-//                witherTaskDelay -= Math.abs(resultDelay);
-//                System.out.println("WITHER TASK DELAY = " + witherTaskDelay);
-////                growthTaskDelay -= loadedSave.getGrowthTimePassed();
-//                performWitherLoops(loopsPassed);
-//                if (currentPet.isAlive()) {
-//                    setSpawnAllowed(true);
-//                    startGame();
-//                } else {
-//                    // pet died after loops passed
-//                    // TODO: check if spawn cooldown passed as well
-//                }
-//            } else {
-//                // pet is dead but ready to spawn
-//                spawn();
-//            }
-//        } else {
-//            // spawn was not allowed while saving
-//
-//            // TODO: DRY!
-//            if ((loadedSave.getSpawnCooldownDelay() + dTime) >= spawnCooldownTaskDelay) {
-//                spawn();
-//            } else {
-//                spawnCooldownTaskDelay -= loadedSave.getSpawnCooldownDelay();
-//                startSpawnCountDown();
-//            }
-//        }
-//    }
-
-
-    // does what should have happened while the game was closed
-    private int performWitherLoops(int loopsNumber) {
-        for (int i = 0; i < loopsNumber; i++) {
-            currentPet.getBored();
-            currentPet.starve();
-            // if pet dies during these loops returns when (on which loop pet had died)
-            if (!currentPet.isAlive()) return i;
-        }
-        return -1;
-    }
     private int performWitherLoops(int loopsNumber, Pet pet) {
         for (int i = 0; i < loopsNumber; i++) {
             pet.getBored();
@@ -223,8 +130,12 @@ public class Game {
         growthTask = new GrowthTask(currentPet);
         growthTimer.schedule(growthTask, growthTaskDelay);
     }
+    public void displayMessage(String message, long millis) {
+        guiController.displayMessage(message,millis);
+    }
     public void gameOver() {
 
+        // block buttons (except exit)
         guiController.block();
 
         // stop tasks if game is over
@@ -237,27 +148,31 @@ public class Game {
             growthTimer.purge();
         }
 
-        System.out.println("GAME OVER");
+        displayMessage(currentPet.getName() + " died.",3);
 
-//        setSpawnAllowed(false);
         startSpawnCountDown();
     }
     private void startSpawnCountDown() {
 
-        // timer allows birth after certain delay
+        // timer triggers birth after certain delay
         spawnTimer = new Timer(false);
         spawnTask = new SpawnCooldownTask(this);
         spawnTimer.schedule(spawnTask,spawnCooldownTaskDelay);
 
-        // TODO: UI countdown possible?
+        //              !UNDER CONSTRUCTION!
+        Timer countDownTimer = new Timer(false);
+        CountDownTask countDownTask = new CountDownTask(guiController,spawnCooldownTaskDelay);
+        countDownTimer.scheduleAtFixedRate(countDownTask,1000,1000);
+        // TODO: UI countdown possible? cancel in spawn method will prevent showing negatives
     }
     public void spawn() {
+        // asks for user input
         PetType type = guiController.askForPetType();
         String name = guiController.askForName();
         currentPet = new Pet(type,name);
         currentPet.setGame(this);
-        System.out.println("SPAWN!");
         startGame();
+        // unblocking buttons
         guiController.unblock();
     }
     public void exitGame() {

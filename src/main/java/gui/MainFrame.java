@@ -8,6 +8,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.TimerTask;
 
 public class MainFrame extends JFrame {
 
@@ -73,6 +74,13 @@ public class MainFrame extends JFrame {
     }
     public void unblock() {
         cp.unblockButtons();
+    }
+    public void displayMessage(String message, long millis) {
+        gp.setMessage(message);
+        // resets message label
+        TimerTask resetTask = new MessageResetTask(gp);
+        java.util.Timer timer = new java.util.Timer();
+        timer.schedule(resetTask,millis);
     }
     public void setPetName(String name) {
         sp.setPetName(name);

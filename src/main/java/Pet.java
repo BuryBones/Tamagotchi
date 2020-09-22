@@ -100,7 +100,7 @@ public class Pet implements Serializable {
 
     public void eat(Food food) {
         if (food.getBestFor().equals(type)) {
-            System.out.println("Good food!");
+            game.displayMessage("Good food!",2000);
             changeHealth(food.getValue());
 
             // pet only grows when fed (and fed with appropriate food!)
@@ -108,12 +108,12 @@ public class Pet implements Serializable {
                 grow();
             }
         } else {
-            System.out.println("I don' like this...");
-            changeHealth(food.getValue()/2);
+            game.displayMessage("I don't like this...",2000);
+            changeHealth(food.getValue()/4);
         }
     }
     public void play() {
-        System.out.println("Wheeeeeee!");
+        game.displayMessage("Wheeeeeee!",1800);
         changeFun(20);
     }
     public void starve() {

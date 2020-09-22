@@ -15,11 +15,12 @@ public class GamePanel extends JPanel {
     private int panelWidth;
     private int panelHeight;
     private Actions currentAction = Actions.IDLE;
+    private JLabel message = new JLabel("");
 
-    int x, y;
-    BufferedImage image;
+    private int x, y;
+    private BufferedImage image;
     Texture texture = Texture.getInstance();
-    Animation animation;
+    private Animation animation;
 
     private void initialize() {
         Toolkit toolkit = Toolkit.getDefaultToolkit();
@@ -29,13 +30,13 @@ public class GamePanel extends JPanel {
         panelWidth = panelDimension.width;
         panelHeight = panelDimension.height;
 
+        message.setFont(new Font("Serif",Font.PLAIN,32));
+        add(message);
+
         x = panelWidth/2-264/2;
         y = panelHeight-264;
 
         setVisible(true);
-//        if (!gameController.isPetNull()) setIdleImage();
-//        revalidate();
-//        repaint();
     }
     public void setAction(Actions action) {
         currentAction = action;
@@ -93,7 +94,12 @@ public class GamePanel extends JPanel {
             x -= 10;
         }
     }
-
+    public void setMessage(String message) {
+        this.message.setText(message);
+    }
+    public void resetMessage() {
+        this.message.setText("");
+    }
     private int getAnimationIndexWithTypeAndAge() {
         return gameController.getPetType().getTextureValue() + gameController.getPetAge().getTextureValue();
     }
