@@ -30,6 +30,12 @@ public class GuiController {
     public void displayMessage(String message, long millis) {
         mainFrame.displayMessage(message,millis);
     }
+    public void countDown(long timeLeft) {
+        mainFrame.countDown(timeLeft);
+    }
+    public void stopCountDown() {
+        mainFrame.stopCountDown();
+    }
     public PetType askForPetType() {
         return mainFrame.askForPetType();
     }

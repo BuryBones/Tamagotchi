@@ -1,5 +1,6 @@
 package main.java.gui;
 
+import main.java.Constants;
 import main.java.PetType;
 
 import javax.swing.*;
@@ -8,7 +9,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.util.TimerTask;
 
 public class MainFrame extends JFrame {
 
@@ -21,11 +21,8 @@ public class MainFrame extends JFrame {
     StatusPanel sp;
     GamePanel gp;
     ControlsPanel cp;
-
-    // TODO: Delete
-    public GamePanel getGp() {
-        return gp;
-    }
+    Timer mainTimer;
+    java.util.Timer countDownTimer;
 
     private void initializeLayout() {
 
@@ -57,30 +54,48 @@ public class MainFrame extends JFrame {
         startTimer();
     }
     private void startTimer() {
-        // TODO: CONSTANT speed
-        System.out.println("Main frame timer started");
-        Timer timer = new Timer(200, new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                sp.setHealth(gameController.getHealth());
-                sp.setFun(gameController.getFun());
-                gp.repaint();
-            }
-        });
-        timer.start();
+        // if timer is not started yet (at launch, normally)
+        if (mainTimer == null || !mainTimer.isRunning()) {
+            mainTimer = new Timer(Constants.SPEED, new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    sp.setHealth(gameController.getHealth());
+                    sp.setFun(gameController.getFun());
+                    gp.repaint();
+                }
+            });
+            mainTimer.start();
+        }
     }
+
+    // blocks control buttons except 'exit'
     public void block() {
         cp.blockButtons();
     }
+
+    // unblocks control buttons
     public void unblock() {
         cp.unblockButtons();
     }
     public void displayMessage(String message, long millis) {
         gp.setMessage(message);
         // resets message label
-        TimerTask resetTask = new MessageResetTask(gp);
+        MessageResetTask resetTask = new MessageResetTask(gp);
         java.util.Timer timer = new java.util.Timer();
         timer.schedule(resetTask,millis);
+    }
+    public void countDown(long millis) {
+        int delay = 5000;
+        CountDownTask countDownTask = new CountDownTask(gp,millis-delay);
+        countDownTimer = new java.util.Timer();
+        countDownTimer.scheduleAtFixedRate(countDownTask,delay,1000);
+    }
+    public void stopCountDown() {
+        if (countDownTimer != null) {
+            countDownTimer.cancel();
+            countDownTimer.purge();
+        }
+        gp.resetMessage();
     }
     public void setPetName(String name) {
         sp.setPetName(name);

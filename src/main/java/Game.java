@@ -11,6 +11,7 @@ public class Game {
     private GrowthTask growthTask;
     private Timer spawnTimer;
     private SpawnCooldownTask spawnTask;
+    private Timer countDownTimer;
 
     private long witherTaskDelay = Constants.STATS_DECREASE_RATE_IN_MILLIS;
     private long spawnCooldownTaskDelay = Constants.SPAWN_COOLDOWN;
@@ -148,7 +149,7 @@ public class Game {
             growthTimer.purge();
         }
 
-        displayMessage(currentPet.getName() + " died.",3);
+        displayMessage(currentPet.getName() + " died.",5000);
 
         startSpawnCountDown();
     }
@@ -160,12 +161,18 @@ public class Game {
         spawnTimer.schedule(spawnTask,spawnCooldownTaskDelay);
 
         //              !UNDER CONSTRUCTION!
-        Timer countDownTimer = new Timer(false);
-        CountDownTask countDownTask = new CountDownTask(guiController,spawnCooldownTaskDelay);
-        countDownTimer.scheduleAtFixedRate(countDownTask,1000,1000);
-        // TODO: UI countdown possible? cancel in spawn method will prevent showing negatives
+//        countDownTimer = new Timer(false);
+//        CountDownTask countDownTask = new CountDownTask(guiController,spawnCooldownTaskDelay);
+//        countDownTimer.scheduleAtFixedRate(countDownTask,1000,1000);
+
+        guiController.countDown(spawnCooldownTaskDelay);
     }
     public void spawn() {
+        if (countDownTimer != null) {
+            countDownTimer.cancel();
+            countDownTimer.purge();
+        }
+        guiController.stopCountDown();
         // asks for user input
         PetType type = guiController.askForPetType();
         String name = guiController.askForName();

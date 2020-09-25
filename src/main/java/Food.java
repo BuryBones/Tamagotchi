@@ -2,13 +2,18 @@ package main.java;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
-import java.io.File;
 import java.io.IOException;
 
 public enum Food {
-    APPLE("Apple",PetType.ROUND,35,"/main\\resources\\images\\food\\apple.png"),
-    CRACKER("Cracker",PetType.SQUARE,25,"/main\\resources\\images\\food\\cracker.png"),
-    CARROT("Carrot",PetType.TRIANGLE,30,"/main\\resources\\images\\food\\carrot.png");
+    // for IDE
+    APPLE("Apple",PetType.ROUND,35, "/main/resources/images/food/apple.png"),
+    CRACKER("Cracker",PetType.SQUARE,25, "/main/resources/images/food/cracker.png"),
+    CARROT("Carrot",PetType.TRIANGLE,30, "/main/resources/images/food/carrot.png");
+
+    // for build
+//    APPLE("Apple",PetType.ROUND,35, "images/food/apple.png"),
+//    CRACKER("Cracker",PetType.SQUARE,25, "images/food/cracker.png"),
+//    CARROT("Carrot",PetType.TRIANGLE,30, "images/food/carrot.png");
 
     private String name;
     private PetType bestFor;
@@ -20,6 +25,10 @@ public enum Food {
         this.bestFor = bestFor;
         this.value = value;
         try {
+            // for build
+//            image = new ImageIcon(ImageIO.read(getClass().getClassLoader().getResource(imagePath)));
+
+            // for IDE
             image = new ImageIcon(ImageIO.read(getClass().getResource(imagePath)));
         } catch (IOException e) {
             System.out.println(name + " IMAGE PROBLEM");

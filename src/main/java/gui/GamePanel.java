@@ -41,9 +41,15 @@ public class GamePanel extends JPanel {
     public void setAction(Actions action) {
         currentAction = action;
         switch (currentAction) {
-            case PLAY -> play();
-            case EAT ->  eat();
-            case MOVE -> move();
+            case PLAY:
+                play();
+                break;
+            case EAT:
+                eat();
+                break;
+            case MOVE:
+                move();
+                break;
         }
     }
     public void resetAction() {
