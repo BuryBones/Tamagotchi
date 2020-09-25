@@ -56,7 +56,6 @@ public class GamePanel extends JPanel {
         currentAction = Actions.IDLE;
     }
     private void renewPetModel() {
-        // TODO: Костыль?
         if (gameController.isPetNull()) return;
         if (currentAction == Actions.IDLE) {
             setIdleImage();

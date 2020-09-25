@@ -9,7 +9,7 @@ public abstract class Constants {
     public static final long SPAWN_COOLDOWN = 20000L;
 
     // how often pet's stats (health & fun) decrease
-    public static final long STATS_DECREASE_RATE_IN_MILLIS = 10000L;
+    public static final long WITHER_PERIOD = 10000L;
 
     // health change per period
     public static final int STARVATION_VALUE = -10;

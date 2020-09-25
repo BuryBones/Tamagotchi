@@ -16,42 +16,6 @@ public class Pet implements Serializable {
     private boolean canGrow;
     private boolean isAlive;
 
-    // TODO: move out of here?
-    // [health][fun]
-    private static Mood[][] moodMatrix = new Mood[5][5];
-    static
-    {
-        moodMatrix[0][0] = Mood.UNHAPPY;
-        moodMatrix[0][1] = Mood.UNHAPPY;
-        moodMatrix[0][2] = Mood.UNHAPPY;
-        moodMatrix[0][3] = Mood.UNHAPPY;
-        moodMatrix[0][4] = Mood.UNHAPPY;
-
-        moodMatrix[1][0] = Mood.UNHAPPY;
-        moodMatrix[1][1] = Mood.UNHAPPY;
-        moodMatrix[1][2] = Mood.UNHAPPY;
-        moodMatrix[1][3] = Mood.UPSET;
-        moodMatrix[1][4] = Mood.UPSET;
-
-        moodMatrix[2][0] = Mood.UNHAPPY;
-        moodMatrix[2][1] = Mood.UNHAPPY;
-        moodMatrix[2][2] = Mood.UPSET;
-        moodMatrix[2][3] = Mood.NEUTRAL;
-        moodMatrix[2][4] = Mood.NEUTRAL;
-
-        moodMatrix[3][0] = Mood.UNHAPPY;
-        moodMatrix[3][1] = Mood.UPSET;
-        moodMatrix[3][2] = Mood.NEUTRAL;
-        moodMatrix[3][3] = Mood.GLAD;
-        moodMatrix[3][4] = Mood.GLAD;
-
-        moodMatrix[4][0] = Mood.UPSET;
-        moodMatrix[4][1] = Mood.NEUTRAL;
-        moodMatrix[4][2] = Mood.GLAD;
-        moodMatrix[4][3] = Mood.HAPPY;
-        moodMatrix[4][4] = Mood.HAPPY;
-    }
-
     public Pet(PetType type,String name) {
         this.type = type;
         this.name = name;
@@ -100,6 +64,7 @@ public class Pet implements Serializable {
 
     public void eat(Food food) {
         if (food.getBestFor().equals(type)) {
+            // if chosen food type is best for this pet
             game.displayMessage("Good food!",2000);
             changeHealth(food.getValue());
 
@@ -108,6 +73,7 @@ public class Pet implements Serializable {
                 grow();
             }
         } else {
+            // if chosen food type is not suitable for this pet
             game.displayMessage("I don't like this...",2000);
             changeHealth(food.getValue()/4);
         }
@@ -124,9 +90,7 @@ public class Pet implements Serializable {
     }
 
     private void grow() {
-        System.out.print("Grows up from " + age);
         age = age.next();
-        System.out.println(" to " + age);
         canGrow = false;
         if (!isMaxAge()) game.startGrowthTimer();
     }
@@ -158,9 +122,8 @@ public class Pet implements Serializable {
         } else {
             int healthLevel = valueToLevel(health, Constants.MAX_HEALTH);
             int funLevel = valueToLevel(fun, Constants.MAX_FUN);
-            setMood(moodMatrix[healthLevel][funLevel]);
+            setMood(Mood.getMoodFromMatrix(healthLevel,funLevel));
         }
-        System.out.println(this);
     }
     private void setMood(Mood mood) {
         this.mood = mood;

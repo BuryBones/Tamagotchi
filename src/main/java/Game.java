@@ -5,15 +5,17 @@ import java.util.Timer;
 public class Game {
 
     private Pet currentPet = null;
+
     private Timer witherTimer;
     private WitherTask witherTask;
+
     private Timer growthTimer;
     private GrowthTask growthTask;
+
     private Timer spawnTimer;
     private SpawnCooldownTask spawnTask;
-    private Timer countDownTimer;
 
-    private long witherTaskDelay = Constants.STATS_DECREASE_RATE_IN_MILLIS;
+    private long witherTaskDelay = Constants.WITHER_PERIOD;
     private long spawnCooldownTaskDelay = Constants.SPAWN_COOLDOWN;
     private long growthTaskDelay = Constants.GROWTH_RATE;
 
@@ -28,7 +30,7 @@ public class Game {
     }
 
     public void launch() {
-        Loader loader = new Loader();
+        Loader loader = new Loader(guiController);
         if (loader.isSavePresent()) {
             // save file found
             setUpLoadedGame(loader);
@@ -43,45 +45,42 @@ public class Game {
 
         // get time passed from save till new game launch
         long dTime = System.currentTimeMillis() - loadedSave.getExitTime();
-        System.out.println("DELTA TIME = " + dTime);
 
         if (loadedPet.isAlive()) {
+            // If loaded pet was alive at the moment of saving
             // calculate and perform loops
+
             // how many loops had passed while game was closed
-            int loopsPassed = (int) (dTime/Constants.STATS_DECREASE_RATE_IN_MILLIS);
-            System.out.println("LOOPS PASSED = " + loopsPassed);
+            int loopsPassed = (int) (dTime/Constants.WITHER_PERIOD);
             // time left till the end of a loop in saveFile
-            long baseDelay = loadedSave.getWitherDelay();
-            System.out.println("BASE DELAY = " + baseDelay);
-            // unfinished loop while the game was closed
-            long additionalDelay = dTime%Constants.STATS_DECREASE_RATE_IN_MILLIS;
-            System.out.println("ADDITIONAL DELAY = " + additionalDelay);
-            // result time to subtract from standard delay time
+            long baseDelay = loadedSave.getWitherPassed();
+            // unfinished loop
+            long additionalDelay = dTime%Constants.WITHER_PERIOD;
+            // result time to subtract from standard period time
             long resultDelay = baseDelay - additionalDelay;
-            System.out.println("RESULT DELAY = " + resultDelay);
             if (resultDelay <= 0) {
                 loopsPassed++;
-                System.out.println("LOOPS++");
             }
+            // if pet dies while performing loops, number of loop
             int deathLoop = performWitherLoops(loopsPassed, loadedPet);
             if (loadedPet.isAlive()) {
                 // set delays
                 witherTaskDelay -= Math.abs(resultDelay);
-                System.out.println("WITHER TASK DELAY = " + witherTaskDelay);
                 if (!loadedPet.isMaxAge()) {
-                    long growthTimePassed = loadedSave.getGrowthTimePassed();
+                    long growthTimePassed = loadedSave.getGrowthPassed();
                     growthTaskDelay -= (growthTimePassed+dTime);
                     if (growthTaskDelay <= 0) {
                         loadedPet.enableGrowing();
                         growthTaskDelay = Constants.GROWTH_RATE;
                     }
                 }
+                // if pet is still alive
                 loadedPet.setGame(this);
                 currentPet = loadedPet;
                 startGame();
             } else {
                 // check spawn delay
-                long timeAfterDeath = Constants.STATS_DECREASE_RATE_IN_MILLIS * (loopsPassed-deathLoop) + additionalDelay;
+                long timeAfterDeath = Constants.WITHER_PERIOD * (loopsPassed-deathLoop) + additionalDelay;
                 if (spawnCooldownTaskDelay <= timeAfterDeath) {
                     spawn();
                 } else {
@@ -91,8 +90,7 @@ public class Game {
             }
         } else {
             // check spawn delay
-            long timePassed = loadedSave.getSpawnCooldownDelay() + dTime;
-            System.out.println("Time passed: " + timePassed);
+            long timePassed = loadedSave.getSpawnPassed() + dTime;
             if (spawnCooldownTaskDelay > timePassed) {
                 spawnCooldownTaskDelay -= timePassed;
                 startSpawnCountDown();
@@ -124,12 +122,7 @@ public class Game {
         // timer which decreases pet's stats repeatedly
         witherTimer = new Timer(false);
         witherTask = new WitherTask(currentPet);
-        witherTimer.scheduleAtFixedRate(witherTask,witherTaskDelay,Constants.STATS_DECREASE_RATE_IN_MILLIS);
-    }
-    public void startGrowthTimer() {
-        growthTimer = new Timer(false);
-        growthTask = new GrowthTask(currentPet);
-        growthTimer.schedule(growthTask, growthTaskDelay);
+        witherTimer.scheduleAtFixedRate(witherTask,witherTaskDelay,Constants.WITHER_PERIOD);
     }
     public void displayMessage(String message, long millis) {
         guiController.displayMessage(message,millis);
@@ -153,25 +146,7 @@ public class Game {
 
         startSpawnCountDown();
     }
-    private void startSpawnCountDown() {
-
-        // timer triggers birth after certain delay
-        spawnTimer = new Timer(false);
-        spawnTask = new SpawnCooldownTask(this);
-        spawnTimer.schedule(spawnTask,spawnCooldownTaskDelay);
-
-        //              !UNDER CONSTRUCTION!
-//        countDownTimer = new Timer(false);
-//        CountDownTask countDownTask = new CountDownTask(guiController,spawnCooldownTaskDelay);
-//        countDownTimer.scheduleAtFixedRate(countDownTask,1000,1000);
-
-        guiController.countDown(spawnCooldownTaskDelay);
-    }
     public void spawn() {
-        if (countDownTimer != null) {
-            countDownTimer.cancel();
-            countDownTimer.purge();
-        }
         guiController.stopCountDown();
         // asks for user input
         PetType type = guiController.askForPetType();
@@ -190,8 +165,22 @@ public class Game {
     public void exitWithoutSave() {
         System.exit(0);
     }
+    public void startGrowthTimer() {
+        growthTimer = new Timer(false);
+        growthTask = new GrowthTask(currentPet);
+        growthTimer.schedule(growthTask, growthTaskDelay);
+    }
+    private void startSpawnCountDown() {
+
+        // timer triggers birth after certain delay
+        spawnTimer = new Timer(false);
+        spawnTask = new SpawnCooldownTask(this);
+        spawnTimer.schedule(spawnTask,spawnCooldownTaskDelay);
+
+        guiController.countDown(spawnCooldownTaskDelay);
+    }
     private void saveGame() {
-        Saver saver = new Saver();
+        Saver saver = new Saver(guiController);
         long witherTaskStartTime = witherTask.getPeriodStart();
         long spawnCooldownTaskStartTime = spawnTask != null ? spawnTask.getStartTime() : 0;
         long growthTaskStartTime = growthTask != null ? growthTask.getStartTime() : 0;

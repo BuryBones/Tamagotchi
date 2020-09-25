@@ -11,10 +11,6 @@ public class GuiController {
         this.mainFrame = mainFrame;
     }
 
-    public void setMainFrame(MainFrame frame) {
-        mainFrame = frame;
-    }
-
     public void start() {
         mainFrame.start();
     }
@@ -41,5 +37,8 @@ public class GuiController {
     }
     public String askForName() {
         return mainFrame.askForName();
+    }
+    public void displayError(String message, boolean exit) {
+        mainFrame.displayError(message,exit);
     }
 }

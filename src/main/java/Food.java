@@ -2,6 +2,7 @@ package main.java;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import java.awt.*;
 import java.io.IOException;
 
 public enum Food {
@@ -18,7 +19,7 @@ public enum Food {
     private String name;
     private PetType bestFor;
     private int value;
-    private ImageIcon image;
+    private ImageIcon imageIcon;
 
     Food(String name, PetType bestFor, int value, String imagePath) {
         this.name = name;
@@ -29,8 +30,10 @@ public enum Food {
 //            image = new ImageIcon(ImageIO.read(getClass().getClassLoader().getResource(imagePath)));
 
             // for IDE
-            image = new ImageIcon(ImageIO.read(getClass().getResource(imagePath)));
+            Image image = ImageIO.read(getClass().getResource(imagePath));
+            imageIcon = new ImageIcon(image.getScaledInstance(48,48, Image.SCALE_SMOOTH));
         } catch (IOException e) {
+            // TODO: Exception handling
             System.out.println(name + " IMAGE PROBLEM");
             e.printStackTrace();
         }
@@ -50,7 +53,7 @@ public enum Food {
     public int getValue() {
         return value;
     }
-    public ImageIcon getImage() {
-        return image;
+    public ImageIcon getIcon() {
+        return imageIcon;
     }
 }

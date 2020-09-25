@@ -67,12 +67,10 @@ public class MainFrame extends JFrame {
             mainTimer.start();
         }
     }
-
     // blocks control buttons except 'exit'
     public void block() {
         cp.blockButtons();
     }
-
     // unblocks control buttons
     public void unblock() {
         cp.unblockButtons();
@@ -116,5 +114,10 @@ public class MainFrame extends JFrame {
             }
         }
         return input;
+    }
+    // displays error and exits program
+    public void displayError(String message,boolean exit) {
+        JOptionPane.showMessageDialog(this,message,"ERROR",JOptionPane.ERROR_MESSAGE);
+        if (exit) gameController.exitWithoutSave();
     }
 }
