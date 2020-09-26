@@ -11,10 +11,6 @@ public class GuiController {
         this.mainFrame = mainFrame;
     }
 
-    public void setMainFrame(MainFrame frame) {
-        mainFrame = frame;
-    }
-
     public void start() {
         mainFrame.start();
     }
@@ -27,10 +23,22 @@ public class GuiController {
     public void setPetName(String name) {
         mainFrame.setPetName(name);
     }
+    public void displayMessage(String message, long millis) {
+        mainFrame.displayMessage(message,millis);
+    }
+    public void countDown(long timeLeft) {
+        mainFrame.countDown(timeLeft);
+    }
+    public void stopCountDown() {
+        mainFrame.stopCountDown();
+    }
     public PetType askForPetType() {
         return mainFrame.askForPetType();
     }
     public String askForName() {
         return mainFrame.askForName();
+    }
+    public void displayError(String message, boolean exit) {
+        mainFrame.displayError(message,exit);
     }
 }

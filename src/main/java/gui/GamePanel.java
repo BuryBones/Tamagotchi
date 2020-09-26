@@ -15,11 +15,12 @@ public class GamePanel extends JPanel {
     private int panelWidth;
     private int panelHeight;
     private Actions currentAction = Actions.IDLE;
+    private JLabel message = new JLabel("");
 
-    int x, y;
-    BufferedImage image;
+    private int x, y;
+    private BufferedImage image;
     Texture texture = Texture.getInstance();
-    Animation animation;
+    private Animation animation;
 
     private void initialize() {
         Toolkit toolkit = Toolkit.getDefaultToolkit();
@@ -29,27 +30,32 @@ public class GamePanel extends JPanel {
         panelWidth = panelDimension.width;
         panelHeight = panelDimension.height;
 
+        message.setFont(new Font("Serif",Font.PLAIN,32));
+        add(message);
+
         x = panelWidth/2-264/2;
         y = panelHeight-264;
 
         setVisible(true);
-//        if (!gameController.isPetNull()) setIdleImage();
-//        revalidate();
-//        repaint();
     }
-    public void setAction(Actions action) {
+    void setAction(Actions action) {
         currentAction = action;
         switch (currentAction) {
-            case PLAY -> play();
-            case EAT ->  eat();
-            case MOVE -> move();
+            case PLAY:
+                play();
+                break;
+            case EAT:
+                eat();
+                break;
+            case MOVE:
+                move();
+                break;
         }
     }
-    public void resetAction() {
+    void resetAction() {
         currentAction = Actions.IDLE;
     }
     private void renewPetModel() {
-        // TODO: Костыль?
         if (gameController.isPetNull()) return;
         if (currentAction == Actions.IDLE) {
             setIdleImage();
@@ -71,7 +77,7 @@ public class GamePanel extends JPanel {
         super.paint(g);
         g.drawImage(image,x,y,null);
     }
-    public void setIdleImage() {
+    void setIdleImage() {
         int index = 0;
         index += gameController.getPetType().getTextureValue();
         index += gameController.getPetAge().getTextureValue();
@@ -80,20 +86,27 @@ public class GamePanel extends JPanel {
         } else {
             index += 15;
         }
-        System.out.println("INDEX " + index);
         image = texture.getPetImage(index);
     }
-    public void moveRight() {
+    void moveRight() {
         if (x <= panelWidth - 264) {
             x += 10;
         }
     }
-    public void moveLeft() {
+    void moveLeft() {
         if (x >= 0) {
             x -= 10;
         }
     }
-
+    void setMessage(String message) {
+        this.message.setText(message);
+    }
+    String getMessage() {
+        return message.getText();
+    }
+    void resetMessage() {
+        this.message.setText("");
+    }
     private int getAnimationIndexWithTypeAndAge() {
         return gameController.getPetType().getTextureValue() + gameController.getPetAge().getTextureValue();
     }
@@ -101,7 +114,7 @@ public class GamePanel extends JPanel {
     public void play() {
         int index = getAnimationIndexWithTypeAndAge();
         BufferedImage[] frames = texture.getPetImage(index+18,index+19);
-        animation = new Animation(frames,3);
+        animation = new Animation(frames,4);
     }
     public void eat() {
         int index = getAnimationIndexWithTypeAndAge();

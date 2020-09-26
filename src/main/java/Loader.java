@@ -7,36 +7,29 @@ import java.io.ObjectInputStream;
 
 public class Loader {
 
-    // TODO: shall be stated somewhere that 'isSavePresent' method has to be called before 'loadPet'
-    //  to ensure correct loading!
+    private GuiController guiController;
+
+    Loader (GuiController guiController) {
+        this.guiController = guiController;
+    }
 
     public boolean isSavePresent() {
-        // TODO: do something
-        File saveFile = new File("saveFile.tam");
+        File saveFile = new File("tam.save");
         if (!saveFile.exists()) {
-            System.out.println("FILE NOT FOUND");
             return false;
         } else if (!saveFile.isFile()) {
-            System.out.println("NOT A FILE");
             return false;
-        } else if (!saveFile.canRead()) {
-            System.out.println("CANNOT READ A FILE");
-            return false;
-        } else {
-            return true;
-        }
+        } else return saveFile.canRead();
     }
     public SaveObj load() {
-        // TODO: make method to throw SOME exceptions
         SaveObj result = null;
-        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream("saveFile.tam"))) {
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream("tam.save"))) {
             result = (SaveObj) ois.readObject();
             System.out.println("Loading complete!");
-        } catch (IOException e) {
-            // TODO: Exception handling!
+        } catch (Exception e) {
+            guiController.displayError("Problem has occurred while loading save file!\n" +
+                    "Game will be started from the beginning.",false);
             e.printStackTrace();
-        } catch (ClassNotFoundException ce) {
-            ce.printStackTrace();
         }
         return result;
     }

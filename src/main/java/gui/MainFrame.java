@@ -1,5 +1,6 @@
 package main.java.gui;
 
+import main.java.Constants;
 import main.java.PetType;
 
 import javax.swing.*;
@@ -20,11 +21,8 @@ public class MainFrame extends JFrame {
     StatusPanel sp;
     GamePanel gp;
     ControlsPanel cp;
-
-    // TODO: Delete
-    public GamePanel getGp() {
-        return gp;
-    }
+    Timer mainTimer;
+    java.util.Timer countDownTimer;
 
     private void initializeLayout() {
 
@@ -56,23 +54,46 @@ public class MainFrame extends JFrame {
         startTimer();
     }
     private void startTimer() {
-        // TODO: CONSTANT speed
-        System.out.println("Main frame timer started");
-        Timer timer = new Timer(200, new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                sp.setHealth(gameController.getHealth());
-                sp.setFun(gameController.getFun());
-                gp.repaint();
-            }
-        });
-        timer.start();
+        // if timer is not started yet (at launch, normally)
+        if (mainTimer == null || !mainTimer.isRunning()) {
+            mainTimer = new Timer(Constants.SPEED, new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    sp.setHealth(gameController.getHealth());
+                    sp.setFun(gameController.getFun());
+                    gp.repaint();
+                }
+            });
+            mainTimer.start();
+        }
     }
+    // blocks control buttons except 'exit'
     public void block() {
         cp.blockButtons();
     }
+    // unblocks control buttons
     public void unblock() {
         cp.unblockButtons();
+    }
+    public void displayMessage(String message, long millis) {
+        gp.setMessage(message);
+        // resets message label
+        MessageResetTask resetTask = new MessageResetTask(gp);
+        java.util.Timer timer = new java.util.Timer();
+        timer.schedule(resetTask,millis);
+    }
+    public void countDown(long millis) {
+        int delay = gp.getMessage().isEmpty() ? 0 : 5000;
+        CountDownTask countDownTask = new CountDownTask(gp,millis-delay);
+        countDownTimer = new java.util.Timer();
+        countDownTimer.scheduleAtFixedRate(countDownTask,delay,1000);
+    }
+    public void stopCountDown() {
+        if (countDownTimer != null) {
+            countDownTimer.cancel();
+            countDownTimer.purge();
+        }
+        gp.resetMessage();
     }
     public void setPetName(String name) {
         sp.setPetName(name);
@@ -87,11 +108,20 @@ public class MainFrame extends JFrame {
         boolean validInput = false;
         String input = "";
         while (!validInput) {
-            input = JOptionPane.showInputDialog(this,"Give a name");
-            if (input != null && !input.isEmpty()) {
+            input = JOptionPane.showInputDialog(this,"Give a name", "New pet",JOptionPane.PLAIN_MESSAGE );
+            if (input == null) {
+                // if "cancel" button is pressed
+                gameController.exitWithoutSave();
+            } else if (!input.isEmpty()) {
+                // only if some name was given
                 validInput = true;
             }
         }
         return input;
+    }
+    // displays error and exits program
+    public void displayError(String message,boolean exit) {
+        JOptionPane.showMessageDialog(this,message,"ERROR",JOptionPane.ERROR_MESSAGE);
+        if (exit) gameController.exitWithoutSave();
     }
 }

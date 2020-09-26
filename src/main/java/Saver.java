@@ -1,31 +1,33 @@
 package main.java;
 
 import java.io.*;
-import java.util.ArrayList;
 
 public class Saver {
 
     private SaveObj saveFile;
+    private GuiController guiController;
 
-    public void prepareSaveFile(Pet pet, boolean spawnCooldown, long timerStartTime,
+    Saver(GuiController guiController) {
+        this.guiController = guiController;
+    }
+
+    public void prepareSaveFile(Pet pet, long timerStartTime,
                                 long spawnCooldownTaskStartTime, boolean canGrow, long growTaskStartTime) {
         long currentTime = System.currentTimeMillis();
-        System.out.println("current " + currentTime);
-        System.out.println("timerStartTime " + timerStartTime);
         // millis until timer task would be triggered
-        long witherDelay = currentTime - timerStartTime;
-        System.out.println("prepare save, witherDelay: " + witherDelay);
-        long spawnDelay = currentTime - spawnCooldownTaskStartTime;
-        long growthDelay = currentTime - growTaskStartTime;
-        System.out.println("prepare save, growthDelay: " + witherDelay);
-        saveFile = new SaveObj(pet, currentTime, spawnCooldown, witherDelay, spawnDelay, canGrow, growthDelay);
+        long witherPassed = currentTime - timerStartTime;
+        // millis until spawn would be allowed
+        long spawnPassed = currentTime - spawnCooldownTaskStartTime;
+        // millis until growth would be allowed
+        long growthPassed = currentTime - growTaskStartTime;
+        saveFile = new SaveObj(pet, currentTime, witherPassed, spawnPassed, canGrow, growthPassed);
     }
     public void save() {
-        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream("saveFile.tam"))) {
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream("tam.save"))) {
             oos.writeObject(saveFile);
             System.out.println("Saving complete!");
         } catch (IOException e) {
-            // TODO: Exception handling!
+            guiController.displayError("Failed to save the game!",false);
             e.printStackTrace();
         }
     }

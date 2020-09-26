@@ -22,8 +22,7 @@ public class FoodMenu extends JPopupMenu {
 
         for (Food foodItem : Food.getValues()) {
             JMenuItem mi = new JMenuItem(foodItem.toString());
-            // TODO: re-do!
-            mi.setIcon(new ImageIcon(foodItem.getImage().getImage().getScaledInstance(48,48,Image.SCALE_SMOOTH)));
+            mi.setIcon(foodItem.getIcon());
             mi.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
