@@ -108,8 +108,12 @@ public class MainFrame extends JFrame {
         boolean validInput = false;
         String input = "";
         while (!validInput) {
-            input = JOptionPane.showInputDialog(this,"Give a name");
-            if (input != null && !input.isEmpty()) {
+            input = JOptionPane.showInputDialog(this,"Give a name", "New pet",JOptionPane.PLAIN_MESSAGE );
+            if (input == null) {
+                // if "cancel" button is pressed
+                gameController.exitWithoutSave();
+            } else if (!input.isEmpty()) {
+                // only if some name was given
                 validInput = true;
             }
         }

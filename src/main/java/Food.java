@@ -7,15 +7,9 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 
 public enum Food {
-    // for IDE
-    APPLE("Apple",PetType.ROUND,35, "main/resources/images/food/apple.png"),
-    CRACKER("Cracker",PetType.SQUARE,25, "main/resources/images/food/cracker.png"),
-    CARROT("Carrot",PetType.TRIANGLE,30, "main/resources/images/food/carrot.png");
-
-    // for build
-//    APPLE("Apple",PetType.ROUND,35, "images/food/apple.png"),
-//    CRACKER("Cracker",PetType.SQUARE,25, "images/food/cracker.png"),
-//    CARROT("Carrot",PetType.TRIANGLE,30, "images/food/carrot.png");
+    APPLE("Apple",PetType.ROUND,35, "images/food/apple.png"),
+    CRACKER("Cracker",PetType.SQUARE,25, "images/food/cracker.png"),
+    CARROT("Carrot",PetType.TRIANGLE,30, "images/food/carrot.png");
 
     private final String name;
     private final PetType bestFor;

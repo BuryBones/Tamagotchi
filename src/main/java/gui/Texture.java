@@ -13,11 +13,7 @@ public class Texture {
     }
     private Texture() {
         BufferedImageLoader loader = new BufferedImageLoader();
-        // that works for IDE
-        petSheet = loader.loadImage("main/resources/images/pets/petSheet.png");
-
-        // that works for build
-//        petSheet = loader.loadImage("images/pets/petSheet.png");
+        petSheet = loader.loadImage("images/pets/petSheet.png");
 
         ps = new SpriteSheet(petSheet);
 
