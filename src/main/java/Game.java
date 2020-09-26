@@ -6,12 +6,15 @@ public class Game {
 
     private Pet currentPet = null;
 
+    // timer to make a pet to starve and get bored
     private Timer witherTimer;
     private WitherTask witherTask;
 
+    // timer to allow a pet to grow
     private Timer growthTimer;
     private GrowthTask growthTask;
 
+    // timer to allow to spawn a new pet
     private Timer spawnTimer;
     private SpawnCooldownTask spawnTask;
 

@@ -6,7 +6,7 @@ public abstract class Constants {
     public  static final int SPEED = 100;
 
     // time to pass before new pet can be spawned
-    public static final long SPAWN_COOLDOWN = 20000L;
+    public static final long SPAWN_COOLDOWN = 30000L;
 
     // how often pet's stats (health & fun) decrease
     public static final long WITHER_PERIOD = 10000L;

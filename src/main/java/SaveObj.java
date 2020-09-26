@@ -4,6 +4,8 @@ import java.io.Serializable;
 
 public class SaveObj implements Serializable {
 
+    // an object which contains all data to be saved while exiting the game
+
     private static final long serialVersionUID = 5193789457848049755L;
 
     private Pet pet;
@@ -24,9 +26,6 @@ public class SaveObj implements Serializable {
     }
     public long getSpawnPassed() {
         return spawnPassed;
-    }
-    public boolean isCanGrow() {
-        return canGrow;
     }
     public long getGrowthPassed() {
         return growthPassed;

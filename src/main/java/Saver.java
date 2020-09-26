@@ -16,7 +16,9 @@ public class Saver {
         long currentTime = System.currentTimeMillis();
         // millis until timer task would be triggered
         long witherPassed = currentTime - timerStartTime;
+        // millis until spawn would be allowed
         long spawnPassed = currentTime - spawnCooldownTaskStartTime;
+        // millis until growth would be allowed
         long growthPassed = currentTime - growTaskStartTime;
         saveFile = new SaveObj(pet, currentTime, witherPassed, spawnPassed, canGrow, growthPassed);
     }

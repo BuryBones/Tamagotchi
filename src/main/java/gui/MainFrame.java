@@ -83,7 +83,7 @@ public class MainFrame extends JFrame {
         timer.schedule(resetTask,millis);
     }
     public void countDown(long millis) {
-        int delay = 5000;
+        int delay = gp.getMessage().isEmpty() ? 0 : 5000;
         CountDownTask countDownTask = new CountDownTask(gp,millis-delay);
         countDownTimer = new java.util.Timer();
         countDownTimer.scheduleAtFixedRate(countDownTask,delay,1000);

@@ -38,7 +38,7 @@ public class GamePanel extends JPanel {
 
         setVisible(true);
     }
-    public void setAction(Actions action) {
+    void setAction(Actions action) {
         currentAction = action;
         switch (currentAction) {
             case PLAY:
@@ -52,7 +52,7 @@ public class GamePanel extends JPanel {
                 break;
         }
     }
-    public void resetAction() {
+    void resetAction() {
         currentAction = Actions.IDLE;
     }
     private void renewPetModel() {
@@ -77,7 +77,7 @@ public class GamePanel extends JPanel {
         super.paint(g);
         g.drawImage(image,x,y,null);
     }
-    public void setIdleImage() {
+    void setIdleImage() {
         int index = 0;
         index += gameController.getPetType().getTextureValue();
         index += gameController.getPetAge().getTextureValue();
@@ -86,23 +86,25 @@ public class GamePanel extends JPanel {
         } else {
             index += 15;
         }
-        System.out.println("INDEX " + index);
         image = texture.getPetImage(index);
     }
-    public void moveRight() {
+    void moveRight() {
         if (x <= panelWidth - 264) {
             x += 10;
         }
     }
-    public void moveLeft() {
+    void moveLeft() {
         if (x >= 0) {
             x -= 10;
         }
     }
-    public void setMessage(String message) {
+    void setMessage(String message) {
         this.message.setText(message);
     }
-    public void resetMessage() {
+    String getMessage() {
+        return message.getText();
+    }
+    void resetMessage() {
         this.message.setText("");
     }
     private int getAnimationIndexWithTypeAndAge() {
@@ -112,7 +114,7 @@ public class GamePanel extends JPanel {
     public void play() {
         int index = getAnimationIndexWithTypeAndAge();
         BufferedImage[] frames = texture.getPetImage(index+18,index+19);
-        animation = new Animation(frames,3);
+        animation = new Animation(frames,4);
     }
     public void eat() {
         int index = getAnimationIndexWithTypeAndAge();
