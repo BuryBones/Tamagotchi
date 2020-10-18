@@ -2,8 +2,10 @@ package main.java;
 
 public abstract class Constants {
 
+    public static final String VERSION = "V 1.0";
+
     // game animation speed
-    public  static final int SPEED = 100;
+    public static final int SPEED = 100;
 
     // time to pass before new pet can be spawned
     public static final long SPAWN_COOLDOWN = 300000L;

@@ -56,7 +56,7 @@ public class Game {
             // how many loops had passed while game was closed
             int loopsPassed = (int) (dTime/Constants.WITHER_PERIOD);
             // time left till the end of a loop in saveFile
-            long baseDelay = main.java.Constants.WITHER_PERIOD - loadedSave.getWitherPassed();
+            long baseDelay = Constants.WITHER_PERIOD - loadedSave.getWitherPassed();
             // unfinished loop
             long additionalDelay = dTime%Constants.WITHER_PERIOD;
             // result time to subtract from standard period time
