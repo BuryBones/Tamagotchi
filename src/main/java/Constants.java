@@ -2,7 +2,7 @@ package main.java;
 
 public abstract class Constants {
 
-    public static final String VERSION = "V 1.0";
+    public static final String VERSION = "V 1.01";
 
     // game animation speed
     public static final int SPEED = 100;
