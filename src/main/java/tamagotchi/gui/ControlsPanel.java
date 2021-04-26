@@ -6,7 +6,6 @@ import java.awt.event.*;
 
 public class ControlsPanel extends JPanel {
 
-
   private final Dimension BUTTON_SIZE = new Dimension(64, 42);
 
   private JButton exit = new JButton("Exit");
