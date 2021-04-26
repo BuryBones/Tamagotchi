@@ -6,6 +6,8 @@ public class Game {
 
   private Pet currentPet = null;
 
+  // TODO: use Scheduled Executors instead of timers?
+
   // timer to make a pet to starve and get bored
   private Timer witherTimer;
   private WitherTask witherTask;
@@ -22,14 +24,10 @@ public class Game {
   private long spawnCooldownTaskDelay = Constants.SPAWN_COOLDOWN;
   private long growthTaskDelay = Constants.GROWTH_RATE;
 
-  GuiController guiController;
+  private final GuiController guiController;
 
-  Game(GuiController guiController) {
+  public Game(GuiController guiController) {
     this.guiController = guiController;
-  }
-
-  public Pet getPet() {
-    return currentPet;
   }
 
   public void launch() {
@@ -43,6 +41,51 @@ public class Game {
     }
   }
 
+  public void gameOver() {
+    guiController.block();  // block buttons (except exit)
+    stopWitherTimer();
+    stopGrowthTimer();
+    displayMessage(currentPet.getName() + " died.", 5000);
+    startSpawnCountDown();
+  }
+
+  public void spawn() {
+    guiController.stopCountDown();
+    // asks for user input
+    PetType type = guiController.askForPetType();
+    String name = guiController.askForName();
+    currentPet = new Pet(type, name);
+    currentPet.setGame(this);
+    startGame();
+    // unblocking buttons
+    guiController.unblock();
+  }
+
+  public void startGrowthTimer() {
+    growthTimer = new Timer(false);
+    growthTask = new GrowthTask(currentPet);
+    growthTimer.schedule(growthTask, growthTaskDelay);
+  }
+
+  public void exitGame() {
+    // forcible game save
+    saveGame();
+    System.exit(0);
+  }
+
+  public void exitWithoutSave() {
+    System.exit(0);
+  }
+
+  public void displayMessage(String message, long millis) {
+    guiController.displayMessage(message, millis);
+  }
+
+  public Pet getPet() {
+    return currentPet;
+  }
+
+  // TODO: this nightmare needs refactoring!
   private void setUpLoadedGame(Loader loader) {
     SaveObj loadedSave = loader.load();
     Pet loadedPet = loadedSave.getPet();
@@ -109,9 +152,9 @@ public class Game {
       pet.getBored();
       pet.starve();
       // if pet dies during these loops returns when (on which loop pet had died)
-        if (!pet.isAlive()) {
-            return i;
-        }
+      if (!pet.isAlive()) {
+        return i;
+      }
     }
     return -1;
   }
@@ -127,66 +170,16 @@ public class Game {
     }
 
     // timer which decreases pet's stats repeatedly
+    // TODO: why not daemon?
     witherTimer = new Timer(false);
     witherTask = new WitherTask(currentPet);
     witherTimer.scheduleAtFixedRate(witherTask, witherTaskDelay, Constants.WITHER_PERIOD);
   }
 
-  public void displayMessage(String message, long millis) {
-    guiController.displayMessage(message, millis);
-  }
-
-  public void gameOver() {
-
-    // block buttons (except exit)
-    guiController.block();
-
-    // stop tasks if game is over
-    if (witherTimer != null) {
-      witherTimer.cancel();
-      witherTimer.purge();
-    }
-    if (growthTimer != null) {
-      growthTimer.cancel();
-      growthTimer.purge();
-    }
-
-    displayMessage(currentPet.getName() + " died.", 5000);
-
-    startSpawnCountDown();
-  }
-
-  public void spawn() {
-    guiController.stopCountDown();
-    // asks for user input
-    PetType type = guiController.askForPetType();
-    String name = guiController.askForName();
-    currentPet = new Pet(type, name);
-    currentPet.setGame(this);
-    startGame();
-    // unblocking buttons
-    guiController.unblock();
-  }
-
-  public void exitGame() {
-    // forcible game save
-    saveGame();
-    System.exit(0);
-  }
-
-  public void exitWithoutSave() {
-    System.exit(0);
-  }
-
-  public void startGrowthTimer() {
-    growthTimer = new Timer(false);
-    growthTask = new GrowthTask(currentPet);
-    growthTimer.schedule(growthTask, growthTaskDelay);
-  }
-
   private void startSpawnCountDown() {
 
     // timer triggers birth after certain delay
+    // TODO: why not daemon?
     spawnTimer = new Timer(false);
     spawnTask = new SpawnCooldownTask(this);
     spawnTimer.schedule(spawnTask, spawnCooldownTaskDelay);
@@ -194,6 +187,7 @@ public class Game {
     guiController.countDown(spawnCooldownTaskDelay);
   }
 
+  // TODO: refactor
   private void saveGame() {
     Saver saver = new Saver(guiController);
     long witherTaskStartTime = witherTask.getPeriodStart();
@@ -202,5 +196,19 @@ public class Game {
     saver.prepareSaveFile(currentPet, witherTaskStartTime, spawnCooldownTaskStartTime,
         currentPet.canGrow(), growthTaskStartTime);
     saver.save();
+  }
+
+  private void stopWitherTimer() {
+    if (witherTimer != null) {
+      witherTimer.cancel();
+      witherTimer.purge();
+    }
+  }
+
+  private void stopGrowthTimer() {
+    if (growthTimer != null) {
+      growthTimer.cancel();
+      growthTimer.purge();
+    }
   }
 }
