@@ -1,6 +1,6 @@
 # Project exclude paths
 .idea
-*.save
 /out/
+/target/
+*.save
 *.iml
-META-INF
