@@ -8,12 +8,12 @@ public class SaveObj implements Serializable {
 
   private static final long serialVersionUID = 5193789457848049755L;
 
-  private Pet pet;
-  private long exitTime;
-  private long witherPassed;
-  private long spawnPassed;
-  private boolean canGrow;
-  private long growthPassed;
+  private final Pet pet;
+  private final long exitTime;
+  private final long witherPassed;
+  private final long spawnPassed;
+  private final boolean canGrow;
+  private final long growthPassed;
 
   public Pet getPet() {
     return pet;
