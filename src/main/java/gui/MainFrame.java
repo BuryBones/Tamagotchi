@@ -44,7 +44,7 @@ public class MainFrame extends JFrame {
         });
 
         pack();
-        setTitle("Tamagotchi");
+        setTitle("Tamagotchi " + Constants.VERSION);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setResizable(false);
