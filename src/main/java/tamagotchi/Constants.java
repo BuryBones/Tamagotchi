@@ -2,6 +2,8 @@ package tamagotchi;
 
 public abstract class Constants {
 
+  public static final String VERSION = "V 0.2";
+
   // game animation speed
   public static final int SPEED = 100;
 
